@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "anthologist"
-version = "0.0.1"
-description = ""
+version = "0.0.2"
+description = "A CLI for managing multiple Poetry-managed Python projects simultaneously"
 authors = ["James Harrison <40500443+jharibo@users.noreply.github.com>"]
 readme = "README.md"
+homepage = "https://github.com/jharibo/anthologist"
+repository = "https://github.com/jharibo/anthologist"
+keywords = ["poetry", "packaging"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
