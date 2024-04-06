@@ -186,7 +186,3 @@ def lock(projects: tuple[str], no_update: bool) -> None:
                 f"\nAnthologist locking dependencies for {project}:", fg="magenta"
             )
             subprocess.run(["poetry", "lock"], cwd=project, shell=True)
-
-
-if __name__ == "__main__":
-    cli()

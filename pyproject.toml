@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "anthologist"
-version = "0.0.2"
+version = "0.0.3"
 description = "A CLI for managing multiple Poetry-managed Python projects simultaneously"
 authors = ["James Harrison <40500443+jharibo@users.noreply.github.com>"]
 readme = "README.md"
@@ -21,3 +21,6 @@ ruff = "^0.3.4"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+anthologist = "anthologist.main:cli"
