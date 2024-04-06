@@ -10,6 +10,8 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 
 
 @click.group()
+@click.pass_context
+@click.version_option()
 def cli() -> None:
     pass
 
