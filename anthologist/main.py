@@ -27,7 +27,31 @@ def cli() -> None:
     multiple=True,
     help="paths to poetry-managed projects",
 )
-def add(dependency: str, version: str | None, projects: tuple[str]) -> None:
+@click.option(
+    "--group", "-G", type=str, required=False, help="the group to add the dependency to"
+)
+@click.option(
+    "--optional",
+    is_flag=True,
+    default=False,
+    required=False,
+    help="add as an optional dependency",
+)
+@click.option(
+    "--lock",
+    is_flag=True,
+    default=False,
+    required=False,
+    help="do not perform install (only update the lockfile)",
+)
+def add(
+    dependency: str,
+    version: str | None,
+    projects: tuple[str],
+    group: str | None = None,
+    optional: bool = False,
+    lock: bool = False,
+) -> None:
     """
     Add a dependency to multiple projects
     """
@@ -52,6 +76,14 @@ def add(dependency: str, version: str | None, projects: tuple[str]) -> None:
     if version:
         dep = f"{dependency}={version}"
 
+    extra_args = []
+    if group:
+        extra_args += ["--group", group]
+    if optional:
+        extra_args += ["--optional"]
+    if lock:
+        extra_args += ["--lock"]
+
     with click.progressbar(
         projects, label=f"Adding {dep}", length=len(projects)
     ) as bar:
@@ -59,7 +91,7 @@ def add(dependency: str, version: str | None, projects: tuple[str]) -> None:
             click.secho(
                 f"\nAnthologist adding {dependency} to {project}:", fg="magenta"
             )
-            subprocess.run(["poetry", "add", dep], cwd=project, shell=True)
+            subprocess.run(["poetry", "add", dep, *extra_args], cwd=project, shell=True)
 
 
 @cli.command()
@@ -70,7 +102,21 @@ def add(dependency: str, version: str | None, projects: tuple[str]) -> None:
     multiple=True,
     help="paths to poetry-managed projects",
 )
-def update(projects: tuple[str]) -> None:
+@click.option(
+    "--lock",
+    is_flag=True,
+    default=False,
+    required=False,
+    help="do not perform install (only update the lockfile)",
+)
+@click.option(
+    "--sync",
+    is_flag=True,
+    default=False,
+    required=False,
+    help="synchronize the environment with the locked packages",
+)
+def update(projects: tuple[str], lock: bool = False, sync: bool = False) -> None:
     """
     Update dependencies for multiple projects
     """
@@ -91,6 +137,12 @@ def update(projects: tuple[str]) -> None:
         click.secho(project, fg="magenta")
     click.secho("----------------", fg="magenta")
 
+    extra_args = []
+    if lock:
+        extra_args += ["--lock"]
+    if sync:
+        extra_args += ["--sync"]
+
     with click.progressbar(
         projects, label="Updating dependencies", length=len(projects)
     ) as bar:
@@ -98,7 +150,7 @@ def update(projects: tuple[str]) -> None:
             click.secho(
                 f"\nAnthologist updating dependencies for {project}:", fg="magenta"
             )
-            subprocess.run(["poetry", "update"], cwd=project, shell=True)
+            subprocess.run(["poetry", "update", *extra_args], cwd=project, shell=True)
 
 
 @cli.command()
@@ -110,7 +162,23 @@ def update(projects: tuple[str]) -> None:
     multiple=True,
     help="paths to poetry-managed projects",
 )
-def remove(dependency: str, projects: tuple[str]) -> None:
+@click.option(
+    "--group",
+    "-G",
+    type=str,
+    required=False,
+    help="the group to remove the dependency from",
+)
+@click.option(
+    "--lock",
+    is_flag=True,
+    default=False,
+    required=False,
+    help="do not perform operations (only update the lockfile)",
+)
+def remove(
+    dependency: str, projects: tuple[str], group: str | None = None, lock: bool = False
+) -> None:
     """
     Remove a dependency from multiple projects
     """
@@ -131,6 +199,12 @@ def remove(dependency: str, projects: tuple[str]) -> None:
         click.secho(project, fg="magenta")
     click.secho("----------------", fg="magenta")
 
+    extra_args = []
+    if group:
+        extra_args += ["--group", group]
+    if lock:
+        extra_args += ["--lock"]
+
     with click.progressbar(
         projects, label=f"Removing {dependency}", length=len(projects)
     ) as bar:
@@ -138,7 +212,9 @@ def remove(dependency: str, projects: tuple[str]) -> None:
             click.secho(
                 f"\nAnthologist removing {dependency} from {project}:", fg="magenta"
             )
-            subprocess.run(["poetry", "remove", dependency], cwd=project, shell=True)
+            subprocess.run(
+                ["poetry", "remove", dependency, *extra_args], cwd=project, shell=True
+            )
 
 
 @cli.command()
